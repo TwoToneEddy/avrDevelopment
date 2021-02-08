@@ -3,5 +3,8 @@
     "AVR.programmer.tool": "/usr/bin/avrdude",
     "AVR.source.libraries": [],
     "AVR.device.type": "atmega328p",
-    "AVR.device.frequency": 1000000
+    "AVR.device.frequency": 16000000,
+    "AVR.programmer.type": "stk500v1",
+    "AVR.programmer.port": "/dev/ttyACM0",
+    "AVR.programmer.rate": 19200
 }

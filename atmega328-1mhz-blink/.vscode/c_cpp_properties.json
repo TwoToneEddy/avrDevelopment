@@ -9,7 +9,7 @@
             "includePath": [],
             "compilerArgs": [
                 "-mmcu=atmega328p",
-                "-DF_CPU=1000000UL"
+                "-DF_CPU=16000000UL"
             ]
         }
     ],

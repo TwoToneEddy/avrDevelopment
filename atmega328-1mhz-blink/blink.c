@@ -15,9 +15,9 @@ int main(void) {
 
   while (1) {
     PORTB |= 1 << 5;  // turn LED on
-    _delay_ms(500);
+    _delay_ms(1000);
     PORTB &= ~(1 << 5);  // turn LED on
-    _delay_ms(500);
+    _delay_ms(1000);
   }
 }
 
