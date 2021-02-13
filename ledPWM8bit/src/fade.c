@@ -35,9 +35,18 @@ board_fuses.efuse = 0xFF
 #define PWM_FREQ  1000
 
 
-void setLED(int dutyCycle){
+void setLED(volatile uint16_t *OCRxx,int dutyCycle){
   int weight = 0xFF / 100;
-  OCR1B = 0xFF - (dutyCycle*weight);
+  *OCRxx = 0xFF - (dutyCycle*weight);
+}
+
+// Return pointer to PWM output for that column
+volatile uint16_t * getCol(int col){
+  if( col == 0)
+    return &OCR1A;
+  else
+    return &OCR1B;
+
 }
 
 void configurePWM(){
@@ -46,12 +55,11 @@ void configurePWM(){
   DDRB |= 1 << PINB1 | 1 << PINB2 | 1 << PINB3;
   DDRD |= 1 << PIND3 | 1 << PIND5 | 1 << PIND6;
 
-  // Set 8bit fast pwm, inverting, max 0x00FF 
+  // For OCR1A and OCR1B, set 8bit fast pwm, inverting, max 0x00FF 
   TCCR1A |= 1 << WGM10 | 1 << COM1A1 | 1 << COM1A0 | 1 << COM1B1 | 1 << COM1B0;
   TCCR1B |= 1 << WGM12;
-  // Set to zero
-  
 
+  
   TCCR1B |= 1 << CS10;
   OCR1A = 0;
   OCR1B = 0;
@@ -61,22 +69,24 @@ void configurePWM(){
 int main(void) {
 
   int duty = 0;
+  volatile uint16_t *selectedPWMOutput;
+
   // Turn on the pin
   configurePWM();
-  
+  selectedPWMOutput = getCol(1);
 
   while(1)
   {
 
     while(duty < 100){
       duty++;
-      setLED(duty);
+      setLED(selectedPWMOutput,duty);
       _delay_ms(10);
     }
     _delay_ms(2000);
     while(duty > 0){
       duty--;
-      setLED(duty);
+      setLED(selectedPWMOutput,duty);
       _delay_ms(10);
     }
   }
