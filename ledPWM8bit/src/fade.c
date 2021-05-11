@@ -1,32 +1,4 @@
 
-/*  Upload using arduino as ISP:
-    Upload the example ArduinoISP to the board that will be the programmer, just like any other sketch
-    Connect via ISP to target
-    Run:
-    avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM2 -b19200 -Uflash:w:blink.hex
-    Good Video: https://www.youtube.com/watch?v=9WeewNNGs5E
-*/
-
-/*
-dip chip
-8mhz internal
-board_fuses.lfuse = 0xF2
-board_fuses.hfuse = 0xDE
-board_fuses.efuse = 0xFD
-
-1mhz internal
-board_fuses.lfuse = 0x72
-board_fuses.hfuse = 0xDE
-board_fuses.efuse = 0xFD
-
-smt
-from factory:
-board_fuses.lfuse = 0x62
-board_fuses.hfuse = 0xD9
-board_fuses.efuse = 0xFF
-
-*/
-
 #define F_CPU 1000000  // by default we have the 1MHz internal oscillator
 
 #include <avr/io.h>      // this contains all the IO port definitions
@@ -82,6 +54,11 @@ volatile uint16_t * getCol(int col){
 }
 
 /*
+
+ATMEGA328P-AU  -  TQFP32  RS 131-0271
+ATMEGA328-PU   -  PDIP28  RS 131-0277
+FT232RL        -  SSOP28  RS 406-580
+
 PWM outputs:
 TCCR0 & TCCR0B
   COL0  PD6   OCR0A
@@ -92,6 +69,14 @@ TCCR1A & TCCR1B
 TCCR2A & TCCR2B
   COL4  PB3   OCR2A
   COL5  PD3   OCR2B   (spare)
+
+Digital OPs:
+PD2
+PD4
+PB6 ?
+PB7 ?
+PD7
+PB0
 */
 void configurePWM(){
 
@@ -113,12 +98,13 @@ void configurePWM(){
   TCCR1B |= 1 << CS10;
   TCCR2B |= 1 << CS20;
 
-  OCR0A = 0;
-  OCR0B = 0;
-  OCR1A = 0;
-  OCR1B = 0;
-  OCR2A = 0;
-  OCR2B = 0;
+
+  OCR0A = 0; //PD6
+  OCR0B = 0; //PD5
+  OCR1A = 0; //PB1
+  OCR1B = 0; //PB2
+  OCR2A = 0; //PB3
+  OCR2B = 0; //PD3
 }
 
 
