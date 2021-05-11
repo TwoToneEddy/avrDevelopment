@@ -32,6 +32,7 @@ Getting started:
 
 
 Useful commands:
+
 	Read fuses:
 	avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM1 -b19200 -Ulfuse:r:
 
