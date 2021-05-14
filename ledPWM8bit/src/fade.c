@@ -5,6 +5,12 @@
 #include <util/delay.h>
 
 #define PWM_FREQ  1000
+#define OUT0  PINB0
+#define OUT1  PINB4
+#define OUT2  PINB5
+#define OUT3  PIND2
+#define OUT4  PIND4
+#define OUT5  PIND7
 
 
 void setLED(volatile uint16_t *OCRxx,int dutyCycle){
@@ -23,7 +29,6 @@ volatile uint16_t * getCol(int col){
   case 1:
     DDRD |= 1 << PIND5;
     return (volatile uint16_t *)&OCR0B;
-    break;
   case 2:
     DDRB |= 1 << PINB1;
     return &OCR1A;
@@ -68,9 +73,9 @@ TCCR2A & TCCR2B
 Digital OPs:
 PD2
 PD4
-PB6 ?
-PB7 ?
 PD7
+PB5
+PB4
 PB0
 */
 void configurePWM(){
@@ -102,18 +107,72 @@ void configurePWM(){
   OCR2B = 0; //PD3
 }
 
+void configureDigitalOutputs()
+{
+  DDRB |= 1 << OUT0 | 1 << OUT1 | 1 << OUT2;
+  DDRD |= 1 << OUT3 | 1 << OUT4 | 1 << OUT5;
+}
+
+void setOutput(int output,int val)
+{
+  switch (output)
+  {
+  case 0:
+    if(val == 1)
+      PORTB |= (1 << OUT0);
+    else
+      PORTB &= ~(1 << OUT0);
+    break;
+  case 1:
+    if(val == 1)
+      PORTB |= (1 << OUT1);
+    else
+      PORTB &= ~(1 << OUT1);
+    break;
+  case 2:
+    if(val == 1)
+      PORTB |= (1 << OUT2);
+    else
+      PORTB &= ~(1 << OUT2);
+    break;
+  case 3:
+    if(val == 1)
+      PORTD |= (1 << OUT3);
+    else
+      PORTD &= ~(1 << OUT3);
+    break;
+  case 4:
+    if(val == 1)
+      PORTD |= (1 << OUT4);
+    else
+      PORTD &= ~(1 << OUT4);
+    break;
+  case 5:
+    if(val == 1)
+      PORTD |= (1 << OUT5);
+    else
+      PORTD &= ~(1 << OUT5);
+    break;
+  default:
+    break;
+  }
+
+}
 
 int main(void) {
 
   int duty = 0;
-  int col = 0;
+  int col = 5;
   volatile uint16_t *selectedPWMOutput;
   int state = 1;
+  int i = 0;
 
   // Turn on the pin
   configurePWM();
-  DDRB |= 1 << PINB0;
-  PORTB |= (1 << PORTB0);
+  configureDigitalOutputs();
+  
+  for(i = 0; i < 6; i++)
+    setOutput(i,1);
 
   while(1)
   {
@@ -134,10 +193,12 @@ int main(void) {
       }
 
       if(state == 1){
-        PORTB &= ~(1 << PORTB0);
+        for(i = 0; i < 6; i++)
+          setOutput(i,0);
         state = 0;
       }else{   
-        PORTB |= (1 << PORTB0);
+        for(i = 0; i < 6; i++)
+          setOutput(i,1);
         state = 1;
       }
     }
