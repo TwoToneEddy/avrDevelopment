@@ -26,25 +26,26 @@ Getting started:
 
 	3. Set fuses to use internal clock:
 
-		avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM1 -b19200 -Ulfuse:w:0xF2:m
-		avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM1 -b19200 -Uhfuse:w:0xDE:m
-		avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM1 -b19200 -Uefuse:w:0xFD:m	
+		avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM0 -b19200 -Ulfuse:w:0xE2:m
+		avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM0 -b19200 -Uhfuse:w:0xDE:m
+		avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM0 -b19200 -Uefuse:w:0xFD:m	
 
 
 Useful commands:
 
 	Read fuses:
-	avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM1 -b19200 -Ulfuse:r:
+	avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM0 -b19200 -Ulfuse:r:
 
 	Write fuses:
 	avrdude -C/usr/share/arduino/hardware/tools/avrdude.conf -v -v -v -v -patmega328p -cstk500v1 -P/dev/ttyACM1 -b19200 -Ulfuse:w:0x72:m
+
 
 
 Fuse settings:
 
 	dip chip
 	8mhz internal
-	board_fuses.lfuse = 0xF2
+	board_fuses.lfuse = 0xE2  (Was F2 but i think that was wrong)
 	board_fuses.hfuse = 0xDE
 	board_fuses.efuse = 0xFD
 

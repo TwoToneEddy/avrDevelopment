@@ -1,5 +1,5 @@
 
-#define F_CPU 1000000  // by default we have the 1MHz internal oscillator
+#define F_CPU 8000000  // by default we have the 1MHz internal oscillator
 
 #include <avr/io.h>      // this contains all the IO port definitions
 #include <util/delay.h>
@@ -17,36 +17,31 @@ volatile uint16_t * getCol(int col){
   switch (col)
   {
   case 0:
-    DDRB = 0x00;
-    DDRD = 0x40;
+    DDRD |= 1 << PIND6;
     return (volatile uint16_t *)&OCR0A;
     break;
   case 1:
-    DDRB = 0x00;
-    DDRD = 0x20;
+    DDRD |= 1 << PIND5;
     return (volatile uint16_t *)&OCR0B;
     break;
   case 2:
-    DDRB = 0x02;
-    DDRD = 0x00;
+    DDRB |= 1 << PINB1;
     return &OCR1A;
     break;
   case 3:
-    DDRB = 0x04;
-    DDRD = 0x00;
+    DDRB |= 1 << PINB2;
     return &OCR1B;
     break;
   case 4:
-    DDRB = 0x08;
-    DDRD = 0x00;
+    DDRB |= 1 << PINB3;
     return (volatile uint16_t *)&OCR2A;
     break;
   case 5:
-    DDRB = 0x00;
-    DDRD = 0x08;
+    DDRD |= 1 << PIND3;
     return (volatile uint16_t *)&OCR2B;
     break;
   default:
+    DDRD |= 1 << PIND6;
     return &OCR1A;
     break;
   }
@@ -113,26 +108,37 @@ int main(void) {
   int duty = 0;
   int col = 0;
   volatile uint16_t *selectedPWMOutput;
+  int state = 1;
 
   // Turn on the pin
   configurePWM();
+  DDRB |= 1 << PINB0;
+  PORTB |= (1 << PORTB0);
 
   while(1)
   {
     while(col < 6){
       selectedPWMOutput = getCol(col);
-      col++;
+      //col++;
 
       while(duty < 100){
         duty++;
         setLED(selectedPWMOutput,duty);
-        _delay_ms(1);
+        _delay_ms(10);
       }
       //_delay_ms(100);
       while(duty > 0){
         duty--;
         setLED(selectedPWMOutput,duty);
-        _delay_ms(1);
+        _delay_ms(10);
+      }
+
+      if(state == 1){
+        PORTB &= ~(1 << PORTB0);
+        state = 0;
+      }else{   
+        PORTB |= (1 << PORTB0);
+        state = 1;
       }
     }
     col = 0;
