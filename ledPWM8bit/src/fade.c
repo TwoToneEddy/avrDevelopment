@@ -118,40 +118,82 @@ void setOutput(int output,int val)
   switch (output)
   {
   case 0:
-    if(val == 1)
+    if(val == 1){
       PORTB |= (1 << OUT0);
-    else
+      PORTB &= ~(1 << OUT1);
+      PORTB &= ~(1 << OUT2);
+      PORTD &= ~(1 << OUT3);
+      PORTD &= ~(1 << OUT4);
+      PORTD &= ~(1 << OUT5);
+    }
+    else{
       PORTB &= ~(1 << OUT0);
+    }
     break;
   case 1:
-    if(val == 1)
+    if(val == 1){
+      PORTB &= ~(1 << OUT0);
       PORTB |= (1 << OUT1);
-    else
+      PORTB &= ~(1 << OUT2);
+      PORTD &= ~(1 << OUT3);
+      PORTD &= ~(1 << OUT4);
+      PORTD &= ~(1 << OUT5);
+    }
+    else{
       PORTB &= ~(1 << OUT1);
+    }
     break;
   case 2:
-    if(val == 1)
+    if(val == 1){
+      PORTB &= ~(1 << OUT0);
+      PORTB &= ~(1 << OUT1);
       PORTB |= (1 << OUT2);
-    else
+      PORTD &= ~(1 << OUT3);
+      PORTD &= ~(1 << OUT4);
+      PORTD &= ~(1 << OUT5);
+    }
+    else{
       PORTB &= ~(1 << OUT2);
+    }
     break;
   case 3:
-    if(val == 1)
+    if(val == 1){
+      PORTB &= ~(1 << OUT0);
+      PORTB &= ~(1 << OUT1);
+      PORTB &= ~(1 << OUT2);
       PORTD |= (1 << OUT3);
-    else
+      PORTD &= ~(1 << OUT4);
+      PORTD &= ~(1 << OUT5);
+    }
+    else{
       PORTD &= ~(1 << OUT3);
+    }
     break;
   case 4:
-    if(val == 1)
+    if(val == 1){
+      PORTB &= ~(1 << OUT0);
+      PORTB &= ~(1 << OUT1);
+      PORTB &= ~(1 << OUT2);
+      PORTD &= ~(1 << OUT3);
       PORTD |= (1 << OUT4);
-    else
+      PORTD &= ~(1 << OUT5);
+    }
+    else{
       PORTD &= ~(1 << OUT4);
+    }
     break;
   case 5:
-    if(val == 1)
+    if(val == 1){
+      PORTB &= ~(1 << OUT0);
+      PORTB &= ~(1 << OUT1);
+      PORTB &= ~(1 << OUT2);
+      PORTD &= ~(1 << OUT3);
+      PORTD &= ~(1 << OUT4);
       PORTD |= (1 << OUT5);
-    else
+    }
+    else{
       PORTD &= ~(1 << OUT5);
+    }
     break;
   default:
     break;
@@ -162,47 +204,44 @@ void setOutput(int output,int val)
 int main(void) {
 
   int duty = 0;
-  int col = 5;
+  int col = 0;
+  int row = 0;
   volatile uint16_t *selectedPWMOutput;
-  int state = 1;
-  int i = 0;
 
   // Turn on the pin
   configurePWM();
   configureDigitalOutputs();
   
-  for(i = 0; i < 6; i++)
-    setOutput(i,1);
 
   while(1)
   {
-    while(col < 6){
-      selectedPWMOutput = getCol(col);
-      //col++;
+    while (row < 6)
+    {
+      setOutput(row,1);
+      row++;
 
-      while(duty < 100){
-        duty++;
-        setLED(selectedPWMOutput,duty);
-        _delay_ms(10);
+      while(col < 2){
+        selectedPWMOutput = getCol(col);
+        col++;
+        duty = 0;
+        while(duty < 100){
+          duty++;
+          setLED(selectedPWMOutput,duty);
+          _delay_ms(6);
+        }
+        //_delay_ms(100);
+        while(duty > 0){
+          duty--;
+          setLED(selectedPWMOutput,duty);
+          _delay_ms(6);
+        }
+          //setLED(selectedPWMOutput,0);
       }
-      //_delay_ms(100);
-      while(duty > 0){
-        duty--;
-        setLED(selectedPWMOutput,duty);
-        _delay_ms(10);
-      }
+      col = 0;
 
-      if(state == 1){
-        for(i = 0; i < 6; i++)
-          setOutput(i,0);
-        state = 0;
-      }else{   
-        for(i = 0; i < 6; i++)
-          setOutput(i,1);
-        state = 1;
-      }
     }
-    col = 0;
+    row = 0;
+    
   }
 
 }
