@@ -24,10 +24,12 @@ volatile uint16_t * getCol(int col){
   {
   case 0:
     DDRD |= 1 << PIND6;
+    DDRD &= ~(1 << PIND5);
     return (volatile uint16_t *)&OCR0A;
     break;
   case 1:
     DDRD |= 1 << PIND5;
+    DDRD &= ~(1 << PIND6);
     return (volatile uint16_t *)&OCR0B;
   case 2:
     DDRB |= 1 << PINB1;
@@ -227,13 +229,13 @@ int main(void) {
         while(duty < 100){
           duty++;
           setLED(selectedPWMOutput,duty);
-          _delay_ms(6);
+          _delay_ms(2);
         }
         //_delay_ms(100);
         while(duty > 0){
           duty--;
           setLED(selectedPWMOutput,duty);
-          _delay_ms(6);
+          _delay_ms(2);
         }
           //setLED(selectedPWMOutput,0);
       }
