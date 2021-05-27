@@ -41,10 +41,12 @@ volatile uint16_t * getCol(int col){
     break;
   case 4:
     DDRB |= 1 << PINB3;
+    DDRD &= ~(1 << PIND3);
     return (volatile uint16_t *)&OCR2A;
     break;
   case 5:
     DDRD |= 1 << PIND3;
+    DDRB &= ~(1 << PINB3);
     return (volatile uint16_t *)&OCR2B;
     break;
   default:
@@ -222,20 +224,20 @@ int main(void) {
       setOutput(row,1);
       row++;
 
-      while(col < 2){
+      while(col < 6){
         selectedPWMOutput = getCol(col);
         col++;
         duty = 0;
         while(duty < 100){
           duty++;
           setLED(selectedPWMOutput,duty);
-          _delay_ms(2);
+          _delay_ms(6);
         }
         //_delay_ms(100);
         while(duty > 0){
           duty--;
           setLED(selectedPWMOutput,duty);
-          _delay_ms(2);
+          _delay_ms(6);
         }
           //setLED(selectedPWMOutput,0);
       }
