@@ -13,13 +13,13 @@
 #define OUT5  PIND7
 
 
-void setLED(volatile uint16_t *OCRxx,int dutyCycle){
+void setRowAndDuty(volatile uint16_t *OCRxx,int dutyCycle){
   int weight = 0xFF / 100;
   *OCRxx = 0xFF - (dutyCycle*weight);
 }
 
 // Return pointer to PWM output for that column
-volatile uint16_t * getCol(int col){
+volatile uint16_t * getRowPtr(int col){
   switch (col)
   {
   case 0:
@@ -117,7 +117,7 @@ void configureDigitalOutputs()
   DDRD |= 1 << OUT3 | 1 << OUT4 | 1 << OUT5;
 }
 
-void setOutput(int output,int val)
+void setCol(int output,int val)
 {
   switch (output)
   {
@@ -205,47 +205,44 @@ void setOutput(int output,int val)
 
 }
 
+int setLED(int row, int col, int duty){
+
+  volatile uint16_t *rowPtr;
+  rowPtr = getRowPtr(row);
+
+  setRowAndDuty(rowPtr,duty);
+  setCol(col,duty>0);
+
+  return 0;
+}
+
+/*
+Cycle though LEDs
+*/
+int testLeds(){
+
+  int del = 10;
+    for(int row = 0; row < 6; row++){
+      for(int col = 0; col < 6; col++){
+        setLED(row,col,100);
+        _delay_ms(del);
+        setLED(row,col,0);
+        _delay_ms(del);
+      }
+    }
+
+}
+
 int main(void) {
 
-  int duty = 0;
-  int col = 0;
-  int row = 0;
-  volatile uint16_t *selectedPWMOutput;
 
-  // Turn on the pin
   configurePWM();
   configureDigitalOutputs();
   
 
   while(1)
   {
-    while (row < 6)
-    {
-      setOutput(row,1);
-      row++;
-
-      while(col < 6){
-        selectedPWMOutput = getCol(col);
-        col++;
-        duty = 0;
-        while(duty < 100){
-          duty++;
-          setLED(selectedPWMOutput,duty);
-          _delay_ms(6);
-        }
-        //_delay_ms(100);
-        while(duty > 0){
-          duty--;
-          setLED(selectedPWMOutput,duty);
-          _delay_ms(6);
-        }
-          //setLED(selectedPWMOutput,0);
-      }
-      col = 0;
-
-    }
-    row = 0;
-    
+    testLeds();
   }
 
 }
