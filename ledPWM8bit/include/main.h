@@ -1,5 +1,6 @@
 #include <avr/io.h>      // this contains all the IO port definitions
 #include <util/delay.h>
+#include "uart.h"
 
 
 
@@ -20,7 +21,7 @@ volatile uint16_t * getRowPtr(int col);
 void setRowAndDuty(volatile uint16_t *OCRxx,int dutyCycle);
 void setColOutput(int output,int val);
 int setLED(int row, int col, int duty);
-int testLeds();
+int testLeds(int del, int mode);
 
 
 // Array to store output pins in an iterable way

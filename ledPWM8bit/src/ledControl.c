@@ -74,21 +74,26 @@ int setLED(int row, int col, int duty){
 }
 
 
-int testLeds(){
+int testLeds(int del, int mode){
 
-    int del = 5;
     int duty = 0;
     for(int row = 0; row < 6; row++){
         for(int col = 0; col < 6; col++){
-
-            while(duty < 100){
-                duty++;
-                setLED(row,col,duty);
+            if(mode == 1){
+                while(duty < 100){
+                    duty++;
+                    setLED(row,col,duty);
+                    _delay_ms(del);
+                }
+                while(duty > 0){
+                    duty --;
+                    setLED(row,col,duty);
+                    _delay_ms(del);
+                }
+            }else{
+                setLED(row,col,100);
                 _delay_ms(del);
-            }
-            while(duty > 0){
-                duty --;
-                setLED(row,col,duty);
+                setLED(row,col,0);
                 _delay_ms(del);
             }
         }

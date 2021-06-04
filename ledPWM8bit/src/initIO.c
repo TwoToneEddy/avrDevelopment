@@ -34,7 +34,7 @@ void configureDigitalOutputs()
     // Configure pins to be outputs
     DDRB |= 1 << OUT0 | 1 << OUT1 | 1 << OUT2;
     DDRD |= 1 << OUT3 | 1 << OUT4 | 1 << OUT5;
-
+    
     // Store output pins in order of colomns
     digitalOuputs[0] = OUT0;
     digitalOuputs[1] = OUT1; 
